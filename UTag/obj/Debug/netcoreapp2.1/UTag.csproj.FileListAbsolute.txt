@@ -1,0 +1,11 @@
+C:\Projects\UTag\UTag\bin\Debug\netcoreapp2.1\UTag.deps.json
+C:\Projects\UTag\UTag\bin\Debug\netcoreapp2.1\UTag.runtimeconfig.json
+C:\Projects\UTag\UTag\bin\Debug\netcoreapp2.1\UTag.runtimeconfig.dev.json
+C:\Projects\UTag\UTag\bin\Debug\netcoreapp2.1\UTag.dll
+C:\Projects\UTag\UTag\obj\Debug\netcoreapp2.1\UTag.csprojAssemblyReference.cache
+C:\Projects\UTag\UTag\obj\Debug\netcoreapp2.1\UTag.csproj.CoreCompileInputs.cache
+C:\Projects\UTag\UTag\obj\Debug\netcoreapp2.1\UTag.RazorAssemblyInfo.cache
+C:\Projects\UTag\UTag\obj\Debug\netcoreapp2.1\UTag.RazorAssemblyInfo.cs
+C:\Projects\UTag\UTag\obj\Debug\netcoreapp2.1\UTag.AssemblyInfoInputs.cache
+C:\Projects\UTag\UTag\obj\Debug\netcoreapp2.1\UTag.AssemblyInfo.cs
+C:\Projects\UTag\UTag\obj\Debug\netcoreapp2.1\UTag.RazorTargetAssemblyInfo.cache
