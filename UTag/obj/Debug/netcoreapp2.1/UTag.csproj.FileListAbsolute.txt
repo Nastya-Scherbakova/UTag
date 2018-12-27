@@ -9,3 +9,6 @@ C:\Projects\UTag\UTag\obj\Debug\netcoreapp2.1\UTag.RazorAssemblyInfo.cs
 C:\Projects\UTag\UTag\obj\Debug\netcoreapp2.1\UTag.AssemblyInfoInputs.cache
 C:\Projects\UTag\UTag\obj\Debug\netcoreapp2.1\UTag.AssemblyInfo.cs
 C:\Projects\UTag\UTag\obj\Debug\netcoreapp2.1\UTag.RazorTargetAssemblyInfo.cache
+C:\Projects\UTag\UTag\bin\Debug\netcoreapp2.1\UTag.pdb
+C:\Projects\UTag\UTag\obj\Debug\netcoreapp2.1\UTag.dll
+C:\Projects\UTag\UTag\obj\Debug\netcoreapp2.1\UTag.pdb

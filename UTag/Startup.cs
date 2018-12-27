@@ -28,7 +28,9 @@ namespace UTag
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
-            services.AddDbContext<UTagContext>(x => x.UseInMemoryDatabase("TestDb"));
+            string connection = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<UTagContext>(options =>
+                options.UseSqlServer(connection));
             services.AddMvc();
             services.AddAutoMapper();
 
