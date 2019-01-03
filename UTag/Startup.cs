@@ -9,6 +9,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using NJsonSchema;
+using NSwag.AspNetCore;
+using System.Reflection;
+using NSwag;
+using NSwag.SwaggerGeneration.Processors.Security;
 using UTag.Helpers;
 using UTag.Services;
 using UTag.Services.Interfaces;
@@ -33,7 +38,7 @@ namespace UTag
                 options.UseSqlServer(connection));
             services.AddMvc();
             services.AddAutoMapper();
-
+            services.AddSwagger();
             // configure strongly typed settings objects
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
@@ -88,7 +93,39 @@ namespace UTag
                 .AllowCredentials());
 
             app.UseAuthentication();
+            app.UseStaticFiles();
+#pragma warning disable CS0618 // Type or member is obsolete
+            app.UseSwaggerUi(typeof(Startup).GetTypeInfo().Assembly, settings =>
+            {
+                
+                settings.GeneratorSettings.DefaultPropertyNameHandling =
+                    PropertyNameHandling.CamelCase;
+                settings.PostProcess = document =>
+                {
+                    document.Info.Version = "v1";
+                    document.Info.Title = "UTag API";
+                    document.Info.Description = "App for recomendations";
+                    document.Info.TermsOfService = "None";
+                    document.Info.Contact = new NSwag.SwaggerContact
+                    {
+                        Name = "Anastasiia Shcherbakova",
+                        Email = "nshcherbakovaa@gmail.com"
+                        
+                    };
 
+                };
+                settings.GeneratorSettings.OperationProcessors.Add(new OperationSecurityScopeProcessor("JWT token"));
+
+                settings.GeneratorSettings.DocumentProcessors.Add(new SecurityDefinitionAppender("JWT token",
+                    new SwaggerSecurityScheme
+                    {
+                        Type = SwaggerSecuritySchemeType.ApiKey,
+                        Name = "Authorization",
+                        Description = "Copy 'Bearer ' + valid JWT token into field",
+                        In = SwaggerSecurityApiKeyLocation.Header,
+                    }));
+            });
+#pragma warning restore CS0618 // Type or member is obsolete
             app.UseMvc();
         }
     }
