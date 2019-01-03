@@ -38,7 +38,7 @@ namespace UTag
                 options.UseSqlServer(connection));
             services.AddMvc();
             services.AddAutoMapper();
-            services.AddSwagger();
+            services.AddSwaggerDocument();
             // configure strongly typed settings objects
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
@@ -94,8 +94,9 @@ namespace UTag
 
             app.UseAuthentication();
             app.UseStaticFiles();
+
 #pragma warning disable CS0618 // Type or member is obsolete
-            app.UseSwaggerUi(typeof(Startup).GetTypeInfo().Assembly, settings =>
+            app.UseSwagger(typeof(Startup).GetTypeInfo().Assembly, settings =>
             {
                 
                 settings.GeneratorSettings.DefaultPropertyNameHandling =
@@ -106,7 +107,7 @@ namespace UTag
                     document.Info.Title = "UTag API";
                     document.Info.Description = "App for recomendations";
                     document.Info.TermsOfService = "None";
-                    document.Info.Contact = new NSwag.SwaggerContact
+                    document.Info.Contact = new SwaggerContact
                     {
                         Name = "Anastasiia Shcherbakova",
                         Email = "nshcherbakovaa@gmail.com"
