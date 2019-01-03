@@ -6,7 +6,7 @@ using UTag.Models;
 
 namespace UTag.Services.Interfaces
 {
-    interface IPersonService
+    public interface IPersonService
     {
         IEnumerable<Person> GetAll();
         Task<Person> GetById(int id);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,13 +23,16 @@ namespace UTag.Controllers
         private readonly AppSettings _appSettings;
         private readonly IMapper _mapper;
         private readonly IUserService _userService;
+        private readonly IPersonService _personService;
 
         public UsersController(
             IUserService userService,
+            IPersonService personService,
             IMapper mapper,
             IOptions<AppSettings> appSettings)
         {
             _userService = userService;
+            _personService = personService;
             _mapper = mapper;
             _appSettings = appSettings.Value;
         }
@@ -70,7 +74,7 @@ namespace UTag.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public IActionResult Register([FromBody] UserDto userDto)
+        public async Task<IActionResult> Register([FromBody] UserDto userDto)
         {
             // map dto to entity
             var user = _mapper.Map<User>(userDto);
@@ -78,7 +82,8 @@ namespace UTag.Controllers
             try
             {
                 // save 
-                _userService.Create(user, userDto.Password);
+                var newUser = _userService.Create(user, userDto.Password);
+                await _personService.Create(newUser);
                 return Ok();
             }
             catch (AppException ex)
