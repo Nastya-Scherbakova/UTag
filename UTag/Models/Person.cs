@@ -16,7 +16,7 @@ namespace UTag.Models
         public virtual ICollection<PersonConnection> ConnectedPersons { get; set; }
         public virtual ICollection<ProductConnection> LikedProducts { get; set; }
         public virtual ICollection<ProductConnection> LikedForPersonProducts { get; set; }
-        public virtual ICollection<PersonTag> ConnectedTags { get; set; }
+        public virtual ICollection<TagConnection> ConnectedTags { get; set; }
 
     }
 }
