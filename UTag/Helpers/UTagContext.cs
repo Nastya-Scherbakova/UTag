@@ -17,7 +17,7 @@ namespace UTag.Helpers
         public DbSet<Product> Products { get; set; }
         public DbSet<PersonConnection> ProductConnections { get; set; }
         public DbSet<Tag> Tags { get; set; }
-        public DbSet<ProductTag> TagConnections { get; set; }
+        public DbSet<TagConnection> TagConnections { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -35,13 +35,8 @@ namespace UTag.Helpers
 
             modelBuilder.Entity<Person>()
                 .HasMany(t => t.ConnectedTags)
-                .WithOne(e => e.Person)
-                .HasForeignKey(e => e.PersonId);
-
-            modelBuilder.Entity<Tag>()
-                .HasMany(t => t.PersonTags)
-                .WithOne(e => e.Tag)
-                .HasForeignKey(e => e.TagId);
+                .WithOne(e => e.ConnectedTo as Person)
+                .HasForeignKey(e => e.ConnectToId);
 
             modelBuilder.Entity<Person>()
                 .HasMany(t => t.LikedProducts)
@@ -55,13 +50,8 @@ namespace UTag.Helpers
 
             modelBuilder.Entity<Product>()
                 .HasMany(t => t.ConnectedTags)
-                .WithOne(e => e.Product)
-                .HasForeignKey(e => e.ProductId);
-
-            modelBuilder.Entity<Tag>()
-               .HasMany(t => t.ProductTags)
-               .WithOne(e => e.Tag)
-               .HasForeignKey(e => e.TagId);
+                .WithOne(e => e.ConnectedTo as Product)
+                .HasForeignKey(e => e.ConnectToId);
 
             modelBuilder.Entity<Product>()
                 .HasMany(t => t.FilterValues)

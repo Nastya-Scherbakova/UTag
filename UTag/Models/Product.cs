@@ -13,6 +13,6 @@ namespace UTag.Models
         public string Link { get; set; }
         public string About { get; set; }
         public virtual ICollection<FilterValue> FilterValues { get; set; }
-        public virtual ICollection<ProductTag> ConnectedTags { get; set; }
+        public virtual ICollection<TagConnection> ConnectedTags { get; set; }
     }
 }

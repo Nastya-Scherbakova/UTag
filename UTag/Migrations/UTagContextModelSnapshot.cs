@@ -98,25 +98,6 @@ namespace UTag.Migrations
                     b.ToTable("PersonConnection");
                 });
 
-            modelBuilder.Entity("UTag.Models.PersonTag", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("PersonId");
-
-                    b.Property<int>("TagId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PersonId");
-
-                    b.HasIndex("TagId");
-
-                    b.ToTable("PersonTag");
-                });
-
             modelBuilder.Entity("UTag.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -159,25 +140,6 @@ namespace UTag.Migrations
                     b.ToTable("ProductConnection");
                 });
 
-            modelBuilder.Entity("UTag.Models.ProductTag", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("ProductId");
-
-                    b.Property<int>("TagId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("TagId");
-
-                    b.ToTable("TagConnections");
-                });
-
             modelBuilder.Entity("UTag.Models.Tag", b =>
                 {
                     b.Property<int>("Id")
@@ -189,6 +151,31 @@ namespace UTag.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tags");
+                });
+
+            modelBuilder.Entity("UTag.Models.TagConnection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ConnectToId");
+
+                    b.Property<int>("ConnectToType");
+
+                    b.Property<int?>("PersonId");
+
+                    b.Property<int>("TagId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConnectToId");
+
+                    b.HasIndex("PersonId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("TagConnections");
                 });
 
             modelBuilder.Entity("UTag.Models.User", b =>
@@ -246,19 +233,6 @@ namespace UTag.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("UTag.Models.PersonTag", b =>
-                {
-                    b.HasOne("UTag.Models.Person", "Person")
-                        .WithMany("ConnectedTags")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("UTag.Models.Tag", "Tag")
-                        .WithMany("PersonTags")
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("UTag.Models.ProductConnection", b =>
                 {
                     b.HasOne("UTag.Models.Person", "PersonFrom")
@@ -277,15 +251,19 @@ namespace UTag.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("UTag.Models.ProductTag", b =>
+            modelBuilder.Entity("UTag.Models.TagConnection", b =>
                 {
-                    b.HasOne("UTag.Models.Product", "Product")
+                    b.HasOne("UTag.Models.Product", "ConnectedTo")
                         .WithMany("ConnectedTags")
-                        .HasForeignKey("ProductId")
+                        .HasForeignKey("ConnectToId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("UTag.Models.Person")
+                        .WithMany("ConnectedTags")
+                        .HasForeignKey("PersonId");
+
                     b.HasOne("UTag.Models.Tag", "Tag")
-                        .WithMany("ProductTags")
+                        .WithMany()
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
