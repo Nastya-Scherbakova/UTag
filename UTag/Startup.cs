@@ -38,7 +38,7 @@ namespace UTag
                 options.UseSqlServer(connection));
             services.AddMvc();
             services.AddAutoMapper();
-            services.AddSwaggerDocument();
+            services.AddSwagger();
             // configure strongly typed settings objects
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
@@ -97,7 +97,7 @@ namespace UTag
             app.UseStaticFiles();
 
 #pragma warning disable CS0618 // Type or member is obsolete
-            app.UseSwagger(typeof(Startup).GetTypeInfo().Assembly, settings =>
+            app.UseSwaggerUi(typeof(Startup).GetTypeInfo().Assembly, settings =>
             {
                 
                 settings.GeneratorSettings.DefaultPropertyNameHandling =

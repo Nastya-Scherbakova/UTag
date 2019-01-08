@@ -33,7 +33,7 @@ namespace UTag.Controllers
         {
             _userService = userService;
             _personService = personService;
-            _mapper = mapper;
+            _mapper = mapper; 
             _appSettings = appSettings.Value;
         }
 

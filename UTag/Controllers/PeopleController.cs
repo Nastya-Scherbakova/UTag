@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UTag.Helpers;
 using UTag.Models;
+using UTag.Services.Interfaces;
 
 namespace UTag.Controllers
 {
@@ -14,18 +15,18 @@ namespace UTag.Controllers
     [ApiController]
     public class PeopleController : ControllerBase
     {
-        private readonly UTagContext _context;
+        private readonly IPersonService _personService;
 
-        public PeopleController(UTagContext context)
+        public PeopleController(IPersonService personService)
         {
-            _context = context;
+            _personService = personService;
         }
 
         // GET: api/People
         [HttpGet]
         public IEnumerable<Person> GetPersons()
         {
-            return _context.Persons;
+            return _personService.GetAll();
         }
 
         // GET: api/People/5
@@ -37,7 +38,7 @@ namespace UTag.Controllers
                 return BadRequest(ModelState);
             }
 
-            var person = await _context.Persons.FindAsync(id);
+            var person = await _personService.GetById(id);
 
             if (person == null)
             {
@@ -48,79 +49,22 @@ namespace UTag.Controllers
         }
 
         // PUT: api/People/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPerson([FromRoute] int id, [FromBody] Person person)
+        [HttpPut]
+        public IActionResult PutPerson([FromBody] Person person)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != person.Id)
-            {
-                return BadRequest();
-            }
 
-            _context.Entry(person).State = EntityState.Modified;
+            _personService.Update(person);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PersonExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            
 
             return NoContent();
         }
 
-        // POST: api/People
-        [HttpPost]
-        public async Task<IActionResult> PostPerson([FromBody] Person person)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            _context.Persons.Add(person);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetPerson", new { id = person.Id }, person);
-        }
-
-        // DELETE: api/People/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePerson([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var person = await _context.Persons.FindAsync(id);
-            if (person == null)
-            {
-                return NotFound();
-            }
-
-            _context.Persons.Remove(person);
-            await _context.SaveChangesAsync();
-
-            return Ok(person);
-        }
-
-        private bool PersonExists(int id)
-        {
-            return _context.Persons.Any(e => e.Id == id);
-        }
+        
     }
 }
