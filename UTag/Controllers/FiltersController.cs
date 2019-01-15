@@ -28,25 +28,6 @@ namespace UTag.Controllers
             return _context.Filters;
         }
 
-        // GET: api/Filters/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetFilter([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var filter = await _context.Filters.FindAsync(id);
-
-            if (filter == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(filter);
-        }
-
         // PUT: api/Filters/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFilter([FromRoute] int id, [FromBody] Filter filter)

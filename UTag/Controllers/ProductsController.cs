@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UTag.Helpers;
 using UTag.Models;
+using UTag.Services.Interfaces;
+using UTag.ViewModels;
 
 namespace UTag.Controllers
 {
@@ -15,10 +17,12 @@ namespace UTag.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly UTagContext _context;
+        private readonly IMLService _mLService;
 
-        public ProductsController(UTagContext context)
+        public ProductsController(UTagContext context, IMLService mLService)
         {
             _context = context;
+            _mLService = mLService;
         }
 
         // GET: api/Products
@@ -45,6 +49,81 @@ namespace UTag.Controllers
             }
 
             return Ok(product);
+        }
+
+        // GET: api/Products/Filter/2
+        [HttpGet("Filter/{filters}")]
+        public async Task<IActionResult> GetProductsByFilters([FromRoute] List<int> filters)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var products = _context.Products.Include(el => el.FilterValues).Where(el => CheckFilters(el.FilterValues, filters));
+
+            if (products == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(products);
+        }
+
+        private bool CheckFilters(IEnumerable<FilterValue> filterValuesOrigin, List<int> filterValuesNeeded)
+        {
+            foreach(var fv in filterValuesNeeded)
+            {
+                if (!filterValuesOrigin.Any(el => el.FilterId == fv)) return false;
+            }
+            return true;
+        }
+
+        // GET: api/Products/Filter/2
+        [HttpGet("Tag/{tags}")]
+        public async Task<IActionResult> GetProductsByTags([FromRoute] List<int> tags)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var products = _context.Products.Include(el => el.ConnectedTags).Where(el => CheckTags(el.ConnectedTags, tags));
+
+            if (products == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(products);
+        }
+
+        private bool CheckTags(IEnumerable<ProductTag> tagsOrigin, List<int> tagsNeeded)
+        {
+            foreach (var fv in tagsNeeded)
+            {
+                if (!tagsOrigin.Any(el => el.TagId == fv)) return false;
+            }
+            return true;
+        }
+
+        // GET: api/Products/Liked
+        [HttpGet("Liked/{personId}")]
+        public async Task<IActionResult> GetLikedProducts([FromRoute] int personId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var person = await _context.Persons.FindAsync(personId);
+            var products = await _mLService.GetReccomendedProducts(person);
+
+            if (products == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(products);
         }
 
         // PUT: api/Products/5
@@ -77,6 +156,39 @@ namespace UTag.Controllers
                 {
                     throw;
                 }
+            }
+
+            return NoContent();
+        }
+
+        // PUT: api/Products/LikeProduct
+        [HttpPost("LikeProduct")]
+        public async Task<IActionResult> LikeProduct([FromBody] ProductConnectionViewModel like)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+
+            var newLike = new ProductConnection()
+            {
+                PersonFromId = like.PersonFromId,
+                PersonToId = like.PersonToId,
+                ProductId = like.ProductId
+            };
+
+            _context.ProductConnections.Add(newLike);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                
+                    return NotFound();
+                
             }
 
             return NoContent();
