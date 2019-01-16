@@ -15,7 +15,7 @@ namespace UTag.Helpers
         public DbSet<FilterValue> FilterValues { get; set; }
         public DbSet<PersonConnection> PersonConnections { get; set; }
         public DbSet<Product> Products { get; set; }
-        public DbSet<PersonConnection> ProductConnections { get; set; }
+        public DbSet<ProductConnection> ProductConnections { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<ProductTag> TagConnections { get; set; }
 
@@ -55,6 +55,11 @@ namespace UTag.Helpers
 
             modelBuilder.Entity<Product>()
                 .HasMany(t => t.ConnectedTags)
+                .WithOne(e => e.Product)
+                .HasForeignKey(e => e.ProductId);
+
+            modelBuilder.Entity<Product>()
+                .HasMany(t => t.Likes)
                 .WithOne(e => e.Product)
                 .HasForeignKey(e => e.ProductId);
 

@@ -27,26 +27,7 @@ namespace UTag.Controllers
         {
             return _context.Tags;
         }
-
-        // GET: api/Tags/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetTag([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var tag = await _context.Tags.FindAsync(id);
-
-            if (tag == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(tag);
-        }
-
+        
         // PUT: api/Tags/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTag([FromRoute] int id, [FromBody] Tag tag)
