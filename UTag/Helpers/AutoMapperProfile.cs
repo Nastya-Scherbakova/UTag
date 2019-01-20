@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using UTag.Models;
+using UTag.ViewModels;
 
 namespace UTag.Helpers
 {
@@ -9,6 +10,14 @@ namespace UTag.Helpers
         {
             CreateMap<User, UserDto>();
             CreateMap<UserDto, User>();
+            CreateMap<ProductViewModel, Product>();
+            CreateMap<Product, ProductViewModel>();
+            CreateMap<FilterViewModel, Filter>();
+            CreateMap<Filter, FilterViewModel>();
+            CreateMap<TagViewModel, Tag>();
+            CreateMap<Tag, TagViewModel>();
+            CreateMap<PersonViewModel, Person>();
+            CreateMap<Person, PersonViewModel>();
         }
     }
 }

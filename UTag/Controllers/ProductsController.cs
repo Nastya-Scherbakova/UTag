@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,24 +14,27 @@ using UTag.ViewModels;
 
 namespace UTag.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
         private readonly UTagContext _context;
         private readonly IMLService _mLService;
+        private readonly IMapper _mapper;
 
-        public ProductsController(UTagContext context, IMLService mLService)
+        public ProductsController(UTagContext context, IMLService mLService, IMapper mapper)
         {
             _context = context;
             _mLService = mLService;
+            _mapper = mapper;
         }
 
         // GET: api/Products
         [HttpGet]
-        public IEnumerable<Product> GetProducts()
+        public IEnumerable<ProductViewModel> GetProducts()
         {
-            return _context.Products;
+            return _mapper.Map<List<ProductViewModel>>(_context.Products);
         }
 
         // GET: api/Products/5
@@ -48,7 +53,9 @@ namespace UTag.Controllers
                 return NotFound();
             }
 
-            return Ok(product);
+            var result = _mapper.Map<ProductViewModel>(product);
+
+            return Ok(result);
         }
 
         // GET: api/Products/Filter/2
@@ -60,14 +67,14 @@ namespace UTag.Controllers
                 return BadRequest(ModelState);
             }
 
-            var products = _context.Products.Include(el => el.FilterValues).Where(el => CheckFilters(el.FilterValues, filters));
+            var products = await _context.Products.Include(el => el.FilterValues).Where(el => CheckFilters(el.FilterValues, filters)).ToListAsync();
 
             if (products == null)
             {
                 return NotFound();
             }
 
-            return Ok(products);
+            return Ok(_mapper.Map<List<ProductViewModel>>(products));
         }
 
         private bool CheckFilters(IEnumerable<FilterValue> filterValuesOrigin, List<int> filterValuesNeeded)
@@ -88,14 +95,14 @@ namespace UTag.Controllers
                 return BadRequest(ModelState);
             }
 
-            var products = _context.Products.Include(el => el.ConnectedTags).Where(el => CheckTags(el.ConnectedTags, tags));
+            var products = await _context.Products.Include(el => el.ConnectedTags).Where(el => CheckTags(el.ConnectedTags, tags)).ToListAsync();
 
             if (products == null)
             {
                 return NotFound();
             }
 
-            return Ok(products);
+            return Ok(_mapper.Map<List<ProductViewModel>>(products));
         }
 
         private bool CheckTags(IEnumerable<ProductTag> tagsOrigin, List<int> tagsNeeded)
@@ -115,32 +122,34 @@ namespace UTag.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var person = await _context.Persons.FindAsync(personId);
-            var products = await _mLService.GetReccomendedProducts(person);
+            var person = await _context.Persons.Include(el=>el.LikedProducts).FirstAsync(el=>el.Id == personId);
+            var products = person.LikedProducts;
+            //var products = await //_mLService.GetReccomendedProducts(person);
 
             if (products == null)
             {
                 return NotFound();
             }
 
-            return Ok(products);
+            return Ok(_mapper.Map<List<ProductViewModel>>(products));
         }
 
         // PUT: api/Products/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct([FromRoute] int id, [FromBody] Product product)
+        public async Task<IActionResult> PutProduct([FromRoute] int id, [FromBody] ProductViewModel product)
         {
+            var orProduct = _mapper.Map<Product>(product);
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != product.Id)
+            if (id != orProduct.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(product).State = EntityState.Modified;
+            _context.Entry(orProduct).State = EntityState.Modified;
 
             try
             {
@@ -196,17 +205,18 @@ namespace UTag.Controllers
 
         // POST: api/Products
         [HttpPost]
-        public async Task<IActionResult> PostProduct([FromBody] Product product)
+        public async Task<IActionResult> PostProduct([FromBody] ProductViewModel product)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            var orProduct = _mapper.Map<Product>(product);
 
-            _context.Products.Add(product);
+            _context.Products.Add(orProduct);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetProduct", new { id = product.Id }, product);
+            return CreatedAtAction("GetProduct", new { id = orProduct.Id }, product);
         }
 
         // DELETE: api/Products/5
@@ -227,7 +237,7 @@ namespace UTag.Controllers
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
 
-            return Ok(product);
+            return Ok();
         }
 
         private bool ProductExists(int id)

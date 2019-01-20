@@ -2,24 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UTag.Helpers;
 using UTag.Models;
 using UTag.Services.Interfaces;
+using UTag.ViewModels;
 
 namespace UTag.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PeopleController : ControllerBase
     {
         private readonly IPersonService _personService;
+        private readonly IMapper _mapper;
 
-        public PeopleController(IPersonService personService)
+        public PeopleController(IPersonService personService, IMapper mapper)
         {
             _personService = personService;
+            _mapper = mapper;
         }
 
         // GET: api/People
@@ -45,22 +51,19 @@ namespace UTag.Controllers
                 return NotFound();
             }
 
-            return Ok(person);
+            return Ok(_mapper.Map<PersonViewModel>(person));
         }
 
         // PUT: api/People/5
         [HttpPut]
-        public IActionResult PutPerson([FromBody] Person person)
+        public IActionResult PutPerson([FromBody] PersonViewModel person)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-
-            _personService.Update(person);
-
-            
+            _personService.Update(_mapper.Map<Person>(person));
 
             return NoContent();
         }
