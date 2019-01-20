@@ -84,6 +84,36 @@ namespace UTag.Controllers
             return CreatedAtAction("GetTag", new { id = tag.Id }, tag);
         }
 
+        // POST: api/Tags/TagProduct
+        [HttpPost("TagProduct")]
+        public async Task<IActionResult> TagProduct([FromBody] ProductTagViewModel tag)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _context.ProductTagConnections.Add(_mapper.Map<ProductTag>(tag));
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetProductTag", new { id = tag.Id }, tag);
+        }
+
+        // POST: api/Tags/TagPerson
+        [HttpPost("TagPerson")]
+        public async Task<IActionResult> TagPerson([FromBody] PersonTagViewModel tag)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _context.PersonTagConnections.Add(_mapper.Map<PersonTag>(tag));
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetPersonTag", new { id = tag.Id }, tag);
+        }
+
         // DELETE: api/Tags/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTag([FromRoute] int id)
@@ -100,6 +130,46 @@ namespace UTag.Controllers
             }
 
             _context.Tags.Remove(tag);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        // DELETE: api/Tags/UntagProduct/3
+        [HttpDelete("UntagProduct/{id}")]
+        public async Task<IActionResult> UntagProduct([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var tag = await _context.ProductTagConnections.FindAsync(id);
+            if (tag == null)
+            {
+                return NotFound();
+            }
+
+            _context.ProductTagConnections.Remove(tag);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        // DELETE: api/Tags/UntagPerson/3
+        [HttpDelete("UntagPerson/{id}")]
+        public async Task<IActionResult> UntagPerson([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var tag = await _context.PersonTagConnections.FindAsync(id);
+            if (tag == null)
+            {
+                return NotFound();
+            }
+
+            _context.PersonTagConnections.Remove(tag);
             await _context.SaveChangesAsync();
 
             return Ok();

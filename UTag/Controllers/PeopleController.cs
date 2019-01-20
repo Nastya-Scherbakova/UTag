@@ -30,9 +30,9 @@ namespace UTag.Controllers
 
         // GET: api/People
         [HttpGet]
-        public IEnumerable<Person> GetPersons()
+        public IEnumerable<PersonViewModel> GetPersons()
         {
-            return _personService.GetAll();
+            return _mapper.Map<List<PersonViewModel>>(_personService.GetAll());
         }
 
         // GET: api/People/5

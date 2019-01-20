@@ -17,7 +17,8 @@ namespace UTag.Helpers
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductConnection> ProductConnections { get; set; }
         public DbSet<Tag> Tags { get; set; }
-        public DbSet<ProductTag> TagConnections { get; set; }
+        public DbSet<ProductTag> ProductTagConnections { get; set; }
+        public DbSet<PersonTag> PersonTagConnections { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
