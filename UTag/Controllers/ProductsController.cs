@@ -34,7 +34,7 @@ namespace UTag.Controllers
         [HttpGet]
         public IEnumerable<ProductViewModel> GetProducts()
         {
-            return _mapper.Map<List<ProductViewModel>>(_context.Products);
+            return _mapper.Map<List<ProductViewModel>>(_context.Products.ToList());
         }
 
         // GET: api/Products/5

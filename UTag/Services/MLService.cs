@@ -68,15 +68,15 @@ namespace UTag.Services
 
         public async void InitML()
         {
-            mlContext = new MLContext();
-            IEnumerable<Person> churnData = await GetAllPersons();
-            var trainData = mlContext.CreateStreamingDataView(MLPerson.AllToMLPerson(churnData));
-            var pipeline = mlContext.Transforms.CopyColumns("LikedProducts", "Label")
-                .Append(mlContext.Transforms.Concatenate("Features", "LikedProducts", "Tags", "Age"))
-                .Append(mlContext.BinaryClassification.Trainers.FieldAwareFactorizationMachine(new string[] {"Features"}));
+            //mlContext = new MLContext();
+            //IEnumerable<Person> churnData = await GetAllPersons();
+            //var trainData = mlContext.CreateStreamingDataView(MLPerson.AllToMLPerson(churnData));
+            //var pipeline = mlContext.Transforms.CopyColumns("LikedProducts", "Label")
+            //    .Append(mlContext.Transforms.Concatenate("Features", "LikedProducts", "Tags", "Age"))
+            //    .Append(mlContext.BinaryClassification.Trainers.FieldAwareFactorizationMachine(new string[] {"Features"}));
 
-            model = pipeline.Fit(trainData);
-            SaveModelAsFile(mlContext, model);
+            //model = pipeline.Fit(trainData);
+            //SaveModelAsFile(mlContext, model);
         }
 
         private static void SaveModelAsFile(MLContext mlContext, ITransformer model)
